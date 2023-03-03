@@ -163,23 +163,23 @@ const login = async(req, res, next)=>{
     try {
         const user = await User.findOne({email: req.body.email});
         if(!user){
-            next(createError(404, "Incorrect email or password!"))
+            return next(createError(404, "Incorrect email or password!"))
         }
         
         const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password);
         if(!isPasswordCorrect) {
-            next(createError(400, "Incorrect email or password!"));
+            return next(createError(400, "Incorrect email or password!"));
         }
         else if(!user.verified){
-            next(createError(400, "Email not verified yet. Check your mailbox"));
+            return next(createError(400, "Email not verified yet. Check your mailbox"));
         }
         else{
-            const token = jwt.sign({id:user._id}, process.env.JWT);
-            const { password, verified, ...otherDetails} = user._doc;
+            const token = jwt.sign({id:user._id, isAdmin: user.isAdmin}, process.env.JWT);
+            const { password, verified, isAdmin, ...otherDetails} = user._doc;
             res.cookie("access_token", token, {
                 httpOnly:true,
             })
-            .status(200).json({...otherDetails});
+            .status(200).json({details:{...otherDetails}, isAdmin});
         }
         
 
@@ -189,6 +189,26 @@ const login = async(req, res, next)=>{
     }
 }
 
+const requestPasswordReset = async(req, res, next)=>{
+    const {email, redirectUrl} = req.body;
+    try {
+        const user = await User.find({email});
+        // console.log(user)
+        if(user.length){
+            if(!user[0].verified){
+                return next(createError(403, 'Email not verified yet'));
+            }
+            else{
+                sendResetEmail(user[0], redirectUrl, res)
+            }
+        }
+        else{
+            return next(createError(404, 'No user bears the email provided'));
+        }
+    } catch (err) {
+        next(err)
+    }
+}
 
 const sendResetEmail = async({_id, email}, redirectUrl, res, next)=>{
     try {
@@ -279,10 +299,23 @@ const resetPass = async(req, res, next)=>{
     }
 }
 
+const logout = (req, res, next)=>{
+    try {
+        res.cookie('access_token', '', {maxAge:1});
+        // res.redirect('/login');
+        res.send('');
+    } catch (err) {
+        next(err);
+    }
+}
+
 module.exports = {
     registerUser,
     verify,
     verificationFile,
     login,
-    resetPass
+    resetPass,
+    sendResetEmail,
+    requestPasswordReset,
+    logout
 }

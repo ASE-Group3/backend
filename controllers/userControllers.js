@@ -2,7 +2,7 @@
 const User =require( "../models/userModel")
 
 const updateUser = async(req, res, next)=>{
-    const userid = req.params.userid;
+    const userid = req.params.id;
     try {
         const updatedUser = await User.findByIdAndUpdate(userid,
             {$set:req.body}, {new:true}
@@ -16,14 +16,14 @@ const updateUser = async(req, res, next)=>{
 const deleteUser = async(req, res, next)=>{
     const userid = req.params.id;
     try {
-        const deletedUser = await User.findByIdAndDelete(userid);
+        await User.findByIdAndDelete(userid);
         res.status(200).json('User deleted successfully');
     } catch (err) {
         next(err)
     }
 }
 const getUser = async(req, res, next)=>{
-    const userid = req.params.userid;
+    const userid = req.params.id;
     try {
         const user = await User.findById(userid);
         res.status(200).json(user);
@@ -32,14 +32,15 @@ const getUser = async(req, res, next)=>{
     }
 }
 const getAllUser = async(req, res, next)=>{
+    // console.log(res.cookies)
     const query = req.query.new;
     
     try {
         const users = query ? 
-        await User.find().sort({_id:-1}).limit(5)
+        await  User.find().sort({_id:-1}).limit(5)
         :
         await User.find();
-        res.status(200).json(users);
+        res.status(200).json(users.filter((a)=>a.verified));
     } catch (err) {
         next(err)
     }

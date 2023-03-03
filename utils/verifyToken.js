@@ -2,6 +2,7 @@ const jwt =require( "jsonwebtoken");
 const { createError } =require( "./error.js");
 const dotenv =require( "dotenv");
 
+// dotenv.config();
 const verifyToken = (req, res, next)=>{
     const token = req.cookies.access_token;
     if(!token){
@@ -26,11 +27,11 @@ const verifyUser = (req, res, next)=>{
 }
 const verifyAdmin = (req, res, next)=>{
     verifyToken(req, res, next, ()=>{
-        if(req.user.isAdmin){
-            next();
+        if(!req.user.isAdmin){
+            return next(createError(403, "You are not authorized!"));
         }
         else{
-            return next(createError(403, "You are not authorized!"));
+            next();
         }
     });
 }

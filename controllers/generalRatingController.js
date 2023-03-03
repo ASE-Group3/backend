@@ -2,22 +2,16 @@ const GeRating = require("../models/generalRating");
 const User = require("../models/userModel");
 
 const createGeRating = async(req, res, next)=>{
-    const user = req.params.userid
+    const user = req.body.raterid
     try {
         const rater = await User.findById(user);
+        console.log(rater)
         const newGeRating = new GeRating({
             ...req.body,
-            rater:rater.fullname
+            rater:rater.fullname? rater.fullname : rater.username
         });
         try {
             const saveGeRating = await newGeRating.save();
-            try {
-                await User.findByIdAndUpdate(user, {
-                    $push:{reviews:saveGeRating._id}
-                })
-            } catch (err) {
-                next(err)
-            }
             res.status(200).json(saveGeRating);
         } catch (err) {
             next(err)
@@ -45,17 +39,9 @@ const updateGeRating = async(req, res, next)=>{
 
 const deleteGeRating = async(req, res, next)=>{
     const {ratingid} = req.params;
-    const user = req.params.userid;
     try {
         await GeRating.findByIdAndDelete(ratingid);
-        try {
-            await User.findByIdAndUpdate(user, {
-                $pull:{reviews:ratingid}
-            })
-        } catch (err) {
-            next(err)
-        }
-        res.status(200).json('GeRating Deleted Successfully');
+        res.status(200).json('Review Deleted Successfully');
     } catch (err) {
         next(err)
     }

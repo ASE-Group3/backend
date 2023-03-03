@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const generalRatingSchema = new mongoose.Schema({
     rater:String,
-    raterid:String,
+    raterid:{type:String, required:true},
     stars:Number,
     review:String
 }, {timestamps:true});

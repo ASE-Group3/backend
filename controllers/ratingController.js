@@ -3,28 +3,15 @@ const Rating = require("../models/productRating");
 const User = require("../models/userModel");
 
 const createRaing = async(req, res, next)=>{
-    const {userid, productid} = req.params;
+    const {raterid} = req.body;
     try {
-        const user = await User.findById(userid);
+        const user = await User.findById(raterid);
         const newRating = new Rating({
             ...req.body,
-            rater:user.fullname
+            rater:user.fullname? user.fullname : user.username,
         })
-        try {
-            const savedRating = await newRating.save();
-            try {
-                await User.findByIdAndUpdate(userid, {
-                    $push:{rated:savedRating._id}
-                })
-                await Product.findByIdAndUpdate(productid, {
-                    $push:{ratings:savedRating._id}
-                })
-            } catch (err) {
-                next(err)
-            }
-        } catch (err) {
-            next(err)
-        }
+        const savedRating = await newRating.save();
+        
         res.status(200).json(savedRating);
     } catch (err) {
         next(err)
@@ -48,14 +35,7 @@ const updateRaing = async(req, res, next)=>{
 const deleteRaing = async(req, res, next)=>{
     const {ratingid, productid} = req.params;
     try {
-        await Rating.findByIdAndUpdate(ratingid);
-        try {
-            await Product.findByIdAndUpdate(productid, {
-                $pull:{ratings:ratingid}
-            })
-        } catch (err) {
-            next(err)
-        }
+        await Rating.findByIdAndDelete(ratingid);
         res.status(200).json('Rating deleted successfully')
     } catch (err) {
         next(err)

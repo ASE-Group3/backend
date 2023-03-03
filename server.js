@@ -7,6 +7,9 @@ const authRoutes =require( './routes/authRoutes')
 const userRoutes =require( './routes/userRoutes');
 const productRoutes =require( './routes/productRoutes');
 const cartRoutes =require( './routes/cartRoutes');
+const reviewRoutes =require( './routes/reviewRoutes');
+const ratingRoutes =require( './routes/ratingRoutes');
+const cookieParser = require('cookie-parser');
 
 
 dotenv.config();
@@ -22,11 +25,14 @@ mongoose.connection.on('disconnected', ()=>{
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser())
 
 app.use('/api/users', authRoutes);
 app.use('/api/profiles', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/carts', cartRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/ratings', ratingRoutes);
 
 
 app.use((err, req, res, next)=>{

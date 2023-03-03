@@ -1,8 +1,14 @@
 const mongoose =require( "mongoose");
 
 const userSchema = new mongoose.Schema({
-    username:{type:String},
-    email:{type:String},
+    username:{
+        type:String,
+        unique:true
+    },
+    email:{
+        type:String,
+        unique:true
+    },
     fullname:{type:String},
     bio:{type:String},
     phone:{type:String},
@@ -20,9 +26,7 @@ const userSchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
-    reviews:[String],
-    rated:[String],
-    cart:[String]
+
     
 }, {timestamps:true})
 
