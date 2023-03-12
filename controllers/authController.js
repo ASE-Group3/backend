@@ -63,7 +63,7 @@ const registerUser = async(req, res, next)=>{
 }
 
 const sendVerificationEmail = async ({_id, email}, res, next)=>{
-    const currentUrl = 'https://ase.onrender.com/';
+    const currentUrl = 'http://localhost:8000/';
     const uniqueString = uuidv4() + _id;
 
     
@@ -72,10 +72,10 @@ const sendVerificationEmail = async ({_id, email}, res, next)=>{
         to:email,
         subject: 'Email Verification',
         html: `
-        <div style=" background: teal; display:flex; align-items:center; justify-content:center, width:30rem; height:30rem; padding:1rem; border-radius:1rem " >
-            <h1 style="width:90%; color:white; font-weight: 600; text-align:center; margin-bottom:1rem" >Verify email to complete registration</h1>
-            <p style="width:80%; color:gainsboro">This link <b>expires in 6 hours </b> </p>
-            <p style="width:80%; color:gainsboro">
+        <div >
+            <h1>Verify email to complete registration</h1>
+            <p>This link <b>expires in 6 hours </b> </p>
+            <p>
             Click <a href=${currentUrl + "api/users/verify/" + _id + "/" + uniqueString } > here </a> to proceed
             </p>
         </div>    
