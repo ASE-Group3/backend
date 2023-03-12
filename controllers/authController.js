@@ -63,7 +63,7 @@ const registerUser = async(req, res, next)=>{
 }
 
 const sendVerificationEmail = async ({_id, email}, res, next)=>{
-    const currentUrl = 'http://localhost:8000/';
+    const currentUrl = 'https://ase.onrender.com/';
     const uniqueString = uuidv4() + _id;
 
     
