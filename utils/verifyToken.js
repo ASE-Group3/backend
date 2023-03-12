@@ -2,7 +2,7 @@ const jwt =require( "jsonwebtoken");
 const { createError } =require( "./error.js");
 const dotenv =require( "dotenv");
 
-// dotenv.config();
+dotenv.config();
 const verifyToken = (req, res, next)=>{
     const token = req.cookies.access_token;
     if(!token){

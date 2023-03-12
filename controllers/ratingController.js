@@ -33,7 +33,7 @@ const updateRaing = async(req, res, next)=>{
 
 
 const deleteRaing = async(req, res, next)=>{
-    const {ratingid, productid} = req.params;
+    const {ratingid} = req.params;
     try {
         await Rating.findByIdAndDelete(ratingid);
         res.status(200).json('Rating deleted successfully')

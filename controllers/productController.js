@@ -52,7 +52,6 @@ const getProduct = async(req, res, next)=>{
 const getAllProducts = async(req, res, next)=>{
     const qNew = req.query.new;
     const qCategory = req.query.category;
-    const {productid} = req.params;
     try {
         let products;
         if(qNew){
@@ -74,18 +73,6 @@ const getAllProducts = async(req, res, next)=>{
 }
 
 
-const getProductRatings = async(req, res, next)=>{
-    const {productid} = req.params;
-    try {
-        const product = await Product.findById(productid);
-        const ratings = await Promise.all(product.ratings.map((rating)=>{
-            return Rating.findById(rating);
-        }))
-        res.status(200).json(ratings);
-    } catch (err) {
-        next(err)
-    }
-}
 
 module.exports = {
     createProduct,
